@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.kt.shudaapp">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/app_icon2"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/app_icon2"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".RegisterActivity"
+            android:label="Register"
+            android:screenOrientation="portrait"
+            android:theme="@style/RegisterTheme"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".VerificationActivity"
+            android:label="Verification"
+            android:parentActivityName=".RegisterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ComplaintActivity"
+            android:label="New Problem"
+            android:parentActivityName=".HomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme" />
+        <activity
+            android:name=".HomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme"/>
+        <activity
+            android:name=".ShareMemoriesActivity"
+            android:label="Share Memories"
+            android:parentActivityName=".HomeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".TeamActivity"
+            android:label="Our Team"
+            android:parentActivityName=".HomeActivity" />
+        <activity
+            android:name=".ContactUSActivity"
+            android:label="Contact Us"
+            android:parentActivityName=".HomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme" />
+        <activity
+            android:name=".HelpDesk"
+            android:label="Help Desk"
+            android:parentActivityName=".HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ShaeedPakageLandscapeActivity"
+            android:label="Shaheed Pakages"
+            android:parentActivityName=".HomeActivity"
+            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".ShaeedPakagePotraitActivity"
+            android:label="Shaheed Pakages"
+            android:parentActivityName=".HomeActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/RegisterTheme"
+            android:windowSoftInputMode="stateHidden"/>
+        <activity
+            android:name=".ForgetActivity"
+            android:parentActivityName=".LoginActivity"
+            android:screenOrientation="portrait"
+            android:label=""
+            android:theme="@style/RegisterTheme"/>
+    </application>
+
+</manifest>
