@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Shuhada e Police</string>
+    <string name="details">Details</string>
+    <string name="hint_password">Enter pin code</string>
+</resources>

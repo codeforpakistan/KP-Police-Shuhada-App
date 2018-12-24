@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/potrait_mode"
+        android:icon="@drawable/ic_stay_primary_portrait_black_24dp"
+        app:showAsAction="always|withText"
+        android:visible="true"
+        android:title="" />
+
+</menu>
