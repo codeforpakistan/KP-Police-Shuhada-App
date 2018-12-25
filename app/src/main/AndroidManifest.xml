@@ -37,7 +37,7 @@
             android:name=".VerificationActivity"
             android:label="Verification"
             android:parentActivityName=".RegisterActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ComplaintActivity"
             android:label="New Problem"

@@ -218,7 +218,7 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                         });
 
-                    }else {
+                    }else if (response.body().getSuccess() == 0){
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
