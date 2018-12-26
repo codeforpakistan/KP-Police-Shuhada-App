@@ -22,6 +22,8 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,7 +46,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class VerificationActivity extends AppCompatActivity {
-    private RelativeLayout verifi_btn;
+    private Button verify_btn, try_verify_btn;
     private Pinview pinview;
     ProgressDialog progressDialog;
     String mobile_no, password;
@@ -68,11 +70,21 @@ public class VerificationActivity extends AppCompatActivity {
         pinview = findViewById(R.id.pinview);
         progressDialog = new ProgressDialog(this);
         verification_layout = findViewById(R.id.verification_layout);
-
-        pinview.setPinViewEventListener(new Pinview.PinViewEventListener() {
+        verify_btn = findViewById(R.id.verify_btn);
+        try_verify_btn = findViewById(R.id.try_verify_btn);
+        try_verify_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataEntered(final Pinview pinview, boolean fromUser) {
-                //Make api calls here or what not
+            public void onClick(View view) {
+                for (int i = 0; i < pinview.getChildCount() ; i++) {
+                    EditText child = (EditText) pinview.getChildAt(i);
+                    child.setText("");
+                }
+
+            }
+        });
+        verify_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -109,19 +121,17 @@ public class VerificationActivity extends AppCompatActivity {
 
                     }
                 });
-
-
             }
         });
 
-        checkPhoneState();
+        getImeiNumber();
 
     }
 
-    public void useInfo() {
+    public void getImeiNumber() {
 
         // get number of slots:
-        if (multiSimTelephonyManager != null) {
+     /*   if (multiSimTelephonyManager != null) {
             sim_slot = multiSimTelephonyManager.sizeSlots();
         }
 
@@ -136,6 +146,17 @@ public class VerificationActivity extends AppCompatActivity {
                 }
             }else {
 
+            }
+
+        }*/
+        TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        for (int i = 0 ; i < manager.getPhoneCount(); i++){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                //getDeviceId() is Deprecated so for android O we can use getImei() method
+                mMap.put("imei"+i ,createPartFromString(manager.getImei(i)));
+            }
+            else {
+                mMap.put("imei"+i, createPartFromString(manager.getDeviceId(i)));
             }
 
         }
@@ -155,11 +176,12 @@ public class VerificationActivity extends AppCompatActivity {
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        VerifiApi verifiApi =  retrofit.create(VerifiApi.class);
+        final VerifiApi verifiApi =  retrofit.create(VerifiApi.class);
         Call<VerifiModel> call = verifiApi.post_verifi(mMap);
         call.enqueue(new Callback<VerifiModel>() {
             @Override
             public void onResponse(Call<VerifiModel> call, final Response<VerifiModel> response) {
+                Log.e("success: ", response.body().getSuccess().toString());
                 if (response.isSuccessful()){
                     if (response.body().getSuccess() == 1){
                         Log.e("onResponse: ", response.toString());
@@ -173,13 +195,15 @@ public class VerificationActivity extends AppCompatActivity {
                             }
                         });
 
-                    }else {
+                    }else if (response.body().getSuccess() == 0){
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                try_verify_btn.setVisibility(View.VISIBLE);
+                                verify_btn.setVisibility(View.GONE);
                                 progressDialog.dismiss();
                                 Snackbar snackbar = Snackbar
-                                        .make(verification_layout, "Some thing went wrong", Snackbar.LENGTH_SHORT);
+                                        .make(verification_layout, "Some thing went wrong try again", Snackbar.LENGTH_SHORT);
                                 View snackBarView = snackbar.getView();
                                 snackBarView.setBackgroundColor(getResources().getColor(R.color.text_color_red));
                                 TextView textView =  snackBarView.findViewById(android.support.design.R.id.snackbar_text);
@@ -197,9 +221,11 @@ public class VerificationActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        try_verify_btn.setVisibility(View.VISIBLE);
+                        verify_btn.setVisibility(View.GONE);
                         progressDialog.dismiss();
                         Snackbar snackbar = Snackbar
-                                .make(verification_layout, "Some thing went wrong", Snackbar.LENGTH_SHORT);
+                                .make(verification_layout, "Some thing went wrong try again", Snackbar.LENGTH_SHORT);
                         View snackBarView = snackbar.getView();
                         snackBarView.setBackgroundColor(getResources().getColor(R.color.text_color_red));
                         TextView textView =  snackBarView.findViewById(android.support.design.R.id.snackbar_text);
@@ -256,7 +282,7 @@ public class VerificationActivity extends AppCompatActivity {
         return isAvailable;
     }
 
-    private void checkPhoneState() {
+   /* private void checkPhoneState() {
         if (ContextCompat.checkSelfPermission(VerificationActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE},Request_Imei);
         }else {
@@ -267,7 +293,7 @@ public class VerificationActivity extends AppCompatActivity {
                 }
             });
 
-        }
+        }*/
         /*if (ContextCompat.checkSelfPermission(VerificationActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED){
             requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE},Request_Imei);
         }else {
@@ -280,31 +306,5 @@ public class VerificationActivity extends AppCompatActivity {
                 mMap.put("imei", createPartFromString(imei));
             }
         }*/
-    }
-
-    @SuppressLint("MissingPermission")
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == Request_Imei) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                multiSimTelephonyManager = new MultiSimTelephonyManager(this, new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        useInfo();
-                    }
-                });
-                /*tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-                    imei = tm.getImei();
-                    mMap.put("imei", createPartFromString(imei));
-                }else {
-                    imei = tm.getDeviceId();
-                    mMap.put("imei", createPartFromString(imei));
-                }*/
-            } else {
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            }
-        }
-    }
+    //}
 }
